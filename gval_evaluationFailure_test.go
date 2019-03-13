@@ -270,6 +270,12 @@ func TestModifierTyping(test *testing.T) {
 		},
 		//InvalidParameterCalls
 		{
+			name:       "Missing parameter",
+			expression: "fooz",
+			parameter:  fooFailureParameters,
+			wantErr:    unknownParameter,
+		},
+		{
 			name:       "Missing parameter field reference",
 			expression: "foo.NotExists",
 			parameter:  fooFailureParameters,
