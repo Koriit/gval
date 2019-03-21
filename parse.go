@@ -8,7 +8,7 @@ import (
 	"text/scanner"
 )
 
-//ParseExpression scans an expression into an Evaluable.
+// ParseExpression scans an expression into an Evaluable.
 func (p *Parser) ParseExpression(c context.Context) (eval Evaluable, err error) {
 	stack := stageStack{}
 	for {
@@ -29,7 +29,7 @@ func (p *Parser) ParseExpression(c context.Context) (eval Evaluable, err error) 
 	}
 }
 
-//ParseNextExpression scans the expression ignoring following operators
+// ParseNextExpression scans the expression ignoring following operators
 func (p *Parser) ParseNextExpression(c context.Context) (eval Evaluable, err error) {
 	scan := p.Scan()
 	ex, ok := p.prefixes[scan]
@@ -187,6 +187,11 @@ func (p *Parser) parseArguments(c context.Context) (args []Evaluable, err error)
 	}
 }
 
+// InArrayOperator returns function implementing 'in' operator
+func InArrayOperator() func(a, b interface{}) (interface{}, error) {
+	return inArray
+}
+
 func inArray(a, b interface{}) (interface{}, error) {
 	col, ok := b.([]interface{})
 	if !ok {
@@ -198,6 +203,11 @@ func inArray(a, b interface{}) (interface{}, error) {
 		}
 	}
 	return false, nil
+}
+
+// TernaryIfOperator returns function implementing ternary if operator
+func TernaryIfOperator() func(context.Context, *Parser, Evaluable) (Evaluable, error) {
+	return parseIf
 }
 
 func parseIf(c context.Context, p *Parser, e Evaluable) (Evaluable, error) {

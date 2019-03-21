@@ -240,6 +240,11 @@ func (e Evaluable) IsConst() bool {
 	return pc == pe
 }
 
+// RegExOperator returns function implementing regEx operator
+func RegExOperator() func(a, b Evaluable) (Evaluable, error) {
+	return regEx
+}
+
 func regEx(a, b Evaluable) (Evaluable, error) {
 	if !b.IsConst() {
 		return func(c context.Context, o interface{}) (interface{}, error) {
@@ -270,6 +275,11 @@ func regEx(a, b Evaluable) (Evaluable, error) {
 		}
 		return regex.MatchString(s), nil
 	}, nil
+}
+
+// NotRegExOperator returns function implementing notRegEx operator
+func NotRegExOperator() func(a, b Evaluable) (Evaluable, error) {
+	return notRegEx
 }
 
 func notRegEx(a, b Evaluable) (Evaluable, error) {
