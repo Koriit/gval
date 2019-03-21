@@ -1,6 +1,10 @@
 package gval
 
-import "testing"
+import (
+	"context"
+	"fmt"
+	"testing"
+)
 
 func TestNoParameter(t *testing.T) {
 	testEvaluate(
@@ -625,26 +629,51 @@ func TestNoParameter(t *testing.T) {
 			{
 				name:       "Object negativ value",
 				expression: `{1: -1,"hello" : "hey"}`,
-				extension: Function("ten", func(arguments ...interface{}) (interface{}, error) {
-					return 10.0, nil
-				}),
-				want: map[string]interface{}{"1": -1., "hello": "hey"},
+				want:       map[string]interface{}{"1": -1., "hello": "hey"},
 			},
 			{
 				name:       "Empty Array",
 				expression: `[]`,
-				extension: Function("ten", func(arguments ...interface{}) (interface{}, error) {
-					return 10.0, nil
-				}),
-				want: []interface{}{},
+				want:       []interface{}{},
 			},
 			{
 				name:       "Empty Object",
 				expression: `{}`,
-				extension: Function("ten", func(arguments ...interface{}) (interface{}, error) {
-					return 10.0, nil
+				want:       map[string]interface{}{},
+			},
+			{
+				name:       "Variadic",
+				expression: `sum(1,2,3,4)`,
+				extension: Function("sum", func(arguments ...float64) (interface{}, error) {
+					sum := 0.
+					for _, a := range arguments {
+						sum += a
+					}
+					return sum, nil
 				}),
-				want: map[string]interface{}{},
+				want: 10.0,
+			},
+			{
+				name:       "Ident Operator",
+				expression: `1 plus 1`,
+				extension: InfixNumberOperator("plus", func(a, b float64) (interface{}, error) {
+					return a + b, nil
+				}),
+				want: 2.0,
+			},
+			{
+				name:       "Postfix Operator",
+				expression: `4§`,
+				extension: PostfixOperator("§", func(_ context.Context, _ *Parser, eval Evaluable) (Evaluable, error) {
+					return func(ctx context.Context, parameter interface{}) (interface{}, error) {
+						i, err := eval.EvalInt(ctx, parameter)
+						if err != nil {
+							return nil, err
+						}
+						return fmt.Sprintf("§%d", i), nil
+					}, nil
+				}),
+				want: "§4",
 			},
 		},
 		t,

@@ -9,9 +9,11 @@ import (
 	"github.com/Koriit/gval"
 )
 
-func ExampleEvaluate_basic() {
+func Example() {
 
-	value, err := gval.Evaluate("10 > 0", nil)
+	vars := map[string]interface{}{"name": "World"}
+
+	value, err := gval.Evaluate(`"Hello " + name + "!"`, vars)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -19,10 +21,10 @@ func ExampleEvaluate_basic() {
 	fmt.Print(value)
 
 	// Output:
-	// true
+	// Hello World!
 }
 
-func ExampleEvaluate_parameter() {
+func ExampleEvaluate() {
 
 	value, err := gval.Evaluate("foo > 0", map[string]interface{}{
 		"foo": -1.,
@@ -331,7 +333,7 @@ func ExampleEvaluable_EvalBool() {
 		fmt.Println(err)
 	}
 
-	if value{
+	if value {
 		fmt.Print("yeah")
 	}
 
