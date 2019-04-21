@@ -387,6 +387,22 @@ func TestParameterized(t *testing.T) {
 			},
 			{
 
+				name:       "single-return function returns error",
+				expression: "Test(`dummy`)",
+				parameter:  map[string]interface{}{"Test": func(err string) error { return fmt.Errorf(err) }},
+				wantErr:    "dummy",
+				want:       "",
+			},
+			{
+
+				name:       "two-returns function returns an error",
+				expression: "Test(`dummy`)",
+				parameter:  map[string]interface{}{"Test": func(err string) (string, error) { return "ok", fmt.Errorf(err) }},
+				want:       "",
+				wantErr:    "dummy",
+			},
+			{
+
 				name:       "Simple parameter call from pointer",
 				expression: "fooptr.String",
 				parameter:  map[string]interface{}{"fooptr": &foo},
