@@ -221,10 +221,9 @@ func (*Parser) callEvaluable(fullname string, fun Evaluable, args ...Evaluable) 
 			}
 			r = r[0 : len(r)-1]
 		}
-
 		switch len(r) {
 		case 0:
-			return err, nil
+			return nil, err
 		case 1:
 			return r[0], err
 		default:
